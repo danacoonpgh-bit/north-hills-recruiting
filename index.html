@@ -319,6 +319,9 @@ section{scroll-margin-top:var(--nav)}
 .fld input,.fld select,.fld textarea{width:100%;font:inherit;font-weight:400;font-size:17px;color:var(--ink);background:var(--paper);border:1px solid #8892ab;border-radius:3px;padding:13px 14px;transition:border-color .25s,box-shadow .25s,background .25s}
 .fld textarea{min-height:104px;resize:vertical}
 .fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(31,105,255,.2);background:#fff}
+.fld-row{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.fldhint{margin:-8px 0 20px;font-size:.92rem;color:var(--ink-2);font-weight:400}
+@media (max-width:520px){.fld-row{grid-template-columns:1fr}}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .card .btn{width:100%;padding:16px 24px;font-size:17px}
 .talk.vis .card .btn::after{content:"";position:absolute;inset:-5px;border-radius:7px;border:2px solid var(--accent);opacity:0;animation:halo 5s ease-in-out infinite;pointer-events:none}
@@ -606,7 +609,8 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <div class="card pt" style="--i:2" id="card">
         <form id="talkform" novalidate>
           <label class="fld"><span>Your name</span><input type="text" name="name" autocomplete="name" required></label>
-          <label class="fld"><span>Best phone or email</span><input type="text" name="contact" autocomplete="email" required></label>
+          <div class="fld-row"><label class="fld"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel"></label><label class="fld"><span>Email</span><input type="email" name="email" autocomplete="email" inputmode="email"></label></div>
+          <p class="fldhint">Add at least one, so I can reach you.</p>
           <label class="fld"><span>I am</span><select name="who"><option>An experienced agent</option><option>A newer agent</option><option>Not sure yet</option></select></label>
           <label class="fld"><span>Anything you want me to know (optional)</span><textarea name="note"></textarea></label>
           <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -896,9 +900,11 @@ form.addEventListener('submit',async e=>{
   e.preventDefault(); msg.className='formmsg'; msg.textContent='';
   const d=new FormData(form);
   if(d.get('_gotcha')){ sent(); return; }
-  const name=(d.get('name')||'').trim(), contact=(d.get('contact')||'').trim();
-  if(!name||!contact){ msg.className='formmsg err'; msg.textContent='Please add your name and the best phone or email to reach you.'; (name?form.contact:form.name).focus(); return; }
-  const body={name,contact,who:d.get('who'),note:(d.get('note')||'').trim()};
+  const name=(d.get('name')||'').trim(), phone=(d.get('phone')||'').trim(), email=(d.get('email')||'').trim();
+  if(!name||(!phone&&!email)){ msg.className='formmsg err'; msg.textContent='Please add your name and a phone number or an email so I can reach you.'; (name?form.phone:form.name).focus(); return; }
+  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ msg.className='formmsg err'; msg.textContent="That email address doesn't look right. Please check it, or use your phone number."; form.email.focus(); return; }
+  const body={_subject:'New private conversation request from '+name,name,phone,email,who:d.get('who'),note:(d.get('note')||'').trim()};
+  if(!email) delete body.email; if(!phone) delete body.phone;
   if(FORMSPREE_ID){
     send.disabled=true; send.textContent='Sending...';
     try{
@@ -911,7 +917,7 @@ form.addEventListener('submit',async e=>{
     }
   } else {
     const subject=encodeURIComponent('Private conversation request from '+name);
-    const text=encodeURIComponent('Name: '+name+'\nBest phone or email: '+contact+'\nI am: '+body.who+'\n\n'+body.note);
+    const text=encodeURIComponent('Name: '+name+'\nPhone: '+phone+'\nEmail: '+email+'\nI am: '+body.who+'\n\n'+body.note);
     location.href='mailto:'+OWNER_EMAIL+'?subject='+subject+'&body='+text;
     sent('Your email app should open with your message ready. Press send and I\'ll be in touch soon.');
   }
