@@ -619,7 +619,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <div>
         <p class="eyebrow pt" style="--i:0">Talk to Dana</p>
         <h2 class="h2 pt" id="tk-h" style="--i:1">Let's talk.</h2>
-        <p class="lead pt" style="--i:2">Fifteen minutes, private, no pressure. Tell me a little and I'll be in touch.</p>
+        <p class="lead pt" style="--i:2">Thirty minutes, private, no pressure. Tell me a little and I'll be in touch.</p>
         <div class="office pt" style="--i:3">
           <b>Dana Coon, Sales Director</b>Coldwell Banker Realty, North Hills<br>
           9600 Perry Hwy Ste 100, Pittsburgh, PA 15237<br><span style="display:block;margin-top:10px;color:var(--ink)">Call or text Dana</span>
@@ -646,11 +646,11 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <button class="mclose" type="button" aria-label="Close the form" data-close><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <form id="talkform" novalidate>
     <h2 class="fdh" id="fd-h">Book a private conversation</h2>
-    <p class="fds">Fifteen minutes, private, no pressure. Tell me a little and I'll be in touch.</p>
+    <p class="fds">Thirty minutes, private, no pressure. Tell me a little and I'll be in touch.</p>
     <label class="fld"><span>Your name</span><input type="text" name="name" autocomplete="name" required></label>
     <div class="fld-row"><label class="fld"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel"></label><label class="fld"><span>Email</span><input type="email" name="email" autocomplete="email" inputmode="email"></label></div>
     <p class="fldhint">Add at least one, so I can reach you.</p>
-    <label class="fld"><span>I am</span><select name="who"><option>An experienced agent</option><option>A newer agent</option><option selected>Not sure yet</option></select></label>
+    <label class="fld"><span>I am</span><select name="who" required><option value="" disabled selected hidden>Choose one</option><option>An experienced agent</option><option>A newer agent</option></select></label>
     <label class="fld"><span>Anything you want me to know (optional)</span><textarea name="note"></textarea></label>
     <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
     <button class="btn" type="submit" id="send">Request a private conversation</button>
@@ -923,7 +923,7 @@ function setSel(d){
 function openForm(who,door){
   if(!dlg||typeof dlg.showModal!=='function'){ location.hash='talk'; return; }
   if(card.classList.contains('sent')){ card.classList.remove('sent'); form.reset(); send.disabled=false; send.textContent='Request a private conversation'; msg.className='formmsg'; msg.textContent=''; }
-  form.who.value=who||'Not sure yet';
+  form.who.value=who||'';
   setSel(door||null);
   root.classList.add('modal-open');
   dlg.showModal();
@@ -952,6 +952,7 @@ form.addEventListener('submit',async e=>{
   const name=(d.get('name')||'').trim(), phone=(d.get('phone')||'').trim(), email=(d.get('email')||'').trim();
   if(!name||(!phone&&!email)){ msg.className='formmsg err'; msg.textContent='Please add your name and a phone number or an email so I can reach you.'; (name?form.phone:form.name).focus(); return; }
   if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ msg.className='formmsg err'; msg.textContent="That email address doesn't look right. Please check it, or use your phone number."; form.email.focus(); return; }
+  if(!d.get('who')){ msg.className='formmsg err'; msg.textContent='Please choose whether you are an experienced agent or a newer agent.'; form.who.focus(); return; }
   const body={_subject:'New private conversation request from '+name,name,phone,email,who:d.get('who'),note:(d.get('note')||'').trim()};
   if(!email) delete body.email; if(!phone) delete body.phone;
   if(FORMSPREE_ID){
