@@ -14,6 +14,8 @@
 <meta property="og:image" content="https://joincbnorthhills.com/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="assets/logo-cb-icon-blue.png">
+<!-- ANALYTICS: paste the Plausible snippet for joincbnorthhills.com on the next line (Plausible dashboard > Site settings > Site installation). Events below queue safely until it loads. -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -649,8 +651,8 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <p class="fds">Thirty minutes, private, no pressure. Tell me a little and I'll be in touch.</p>
     <label class="fld"><span>Your name</span><input type="text" name="name" autocomplete="name" required></label>
     <div class="fld-row"><label class="fld"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel"></label><label class="fld"><span>Email</span><input type="email" name="email" autocomplete="email" inputmode="email"></label></div>
-    <p class="fldhint">Add at least one, so I can reach you.</p>
-    <label class="fld"><span>I am</span><select name="who" required><option value="" disabled selected hidden>Choose one</option><option>An experienced agent</option><option>A newer agent</option></select></label>
+    <p class="fldhint">Phone is fastest. I call first. Add an email too if you like.</p>
+    <div class="fld-row"><label class="fld"><span>I am</span><select name="who" required><option value="" disabled selected hidden>Choose one</option><option>An experienced agent</option><option>A newer agent</option></select></label><label class="fld"><span>Best time to call</span><select name="when"><option>Anytime</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select></label></div>
     <label class="fld"><span>Anything you want me to know (optional)</span><textarea name="note"></textarea></label>
     <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
     <button class="btn" type="submit" id="send">Request a private conversation</button>
@@ -687,6 +689,9 @@ const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const smooth=(p,e0,e1)=>{const t=clamp((p-e0)/(e1-e0),0,1);return t*t*(3-2*t)};
 function rng(seed){let s=seed>>>0;return()=>(s=(s*1664525+1013904223)>>>0)/4294967296}
 const root=document.documentElement;
+/* analytics: named events for Plausible. Queues until the script loads, silently does nothing if it never does. */
+window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)};
+const track=(name,props)=>{ try{ window.plausible(name,props?{props}:undefined); }catch(_){} };
 const RM=matchMedia('(prefers-reduced-motion: reduce)');
 
 /* ---------- FORM CONFIG: paste the Formspree form id here (the part after /f/). Empty = falls back to the visitor's email app. ---------- */
@@ -781,6 +786,7 @@ function initHeroOnce(){
   setTimeout(go,4000);
 }
 async function loadHeroBlob(){
+  const t0=performance.now();
   const ctrl=new AbortController(); let wd=setTimeout(()=>ctrl.abort(),20000);
   const res=await fetch(VIDEO_URL,{priority:'low',signal:ctrl.signal});
   if(!res.ok) throw new Error('video '+res.status);
@@ -799,9 +805,10 @@ async function loadHeroBlob(){
     target=heroProgress(); shown=target;
     requestSeek(shown*video.duration);
     stage.classList.add('video-ready'); kick();
+    track('video_ready',{secs:String(Math.round((performance.now()-t0)/500)/2)});
   },{once:true});
 }
-function failVideo(){ stage.classList.add('video-failed'); ring.style.display='none'; }
+function failVideo(){ track('video_failed'); stage.classList.add('video-failed'); ring.style.display='none'; }
 
 function enableScrub(){
   if(scrubOn) return; scrubOn=true;
@@ -825,6 +832,7 @@ const MQLS=GATES.map(q=>matchMedia(q));
 MQLS.forEach(m=>m.addEventListener('change',()=>{ applyHeroMode(); applyReducedMotion(); }));
 loadStart=performance.now();
 applyHeroMode();
+track('hero_mode',{mode:scrubOn?'scrub':'static'});
 
 /* =====================================================
    PAGE: reveals, signature line, hold interaction
@@ -838,6 +846,8 @@ rvs.forEach(r=>io.observe(r));
 /* sections toggle .vis so their whisper loops run only on screen */
 const vio=new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('vis',e.isIntersecting)),{threshold:0.05});
 $$('.who,.home,.hub,.talk,#phone').forEach(s=>vio.observe(s));
+const seen=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ track('section_view',{section:e.target.id}); seen.unobserve(e.target); } }),{threshold:0.35});
+$$('#who,#home,#hub,#talk').forEach(s=>seen.observe(s));
 
 /* Agent Hub preview: illustrated calendar and floor-time boards, then the tab controller */
 (function(){
@@ -853,7 +863,7 @@ $$('.who,.home,.hub,.talk,#phone').forEach(s=>vio.observe(s));
   slots.forEach((s,r)=>{ f+='<div class="sl">'+s+'</div>'; days.forEach((_,c)=>{ const k=c+'-'+r; f+='<div class="s'+(mine.has(k)?' y':taken.has(k)?' x':'')+'"></div>'; }); });
   ft.innerHTML=f;
   const tabs=$$('.tab'), panels=$$('.panel');
-  function selTab(i,focus){ tabs.forEach((t,j)=>{ const on=i===j; t.setAttribute('aria-selected',on); t.tabIndex=on?0:-1; panels[j].hidden=!on; }); if(focus) tabs[i].focus(); }
+  function selTab(i,focus){ if(focus!==undefined||tabs[i].getAttribute('aria-selected')!=='true') track('hub_tab',{tab:tabs[i].textContent}); tabs.forEach((t,j)=>{ const on=i===j; t.setAttribute('aria-selected',on); t.tabIndex=on?0:-1; panels[j].hidden=!on; }); if(focus) tabs[i].focus(); }
   tabs.forEach((t,i)=>{
     t.addEventListener('click',()=>selTab(i));
     t.addEventListener('keydown',e=>{
@@ -892,7 +902,7 @@ updateTline();
     f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
     f.allowFullscreen=true;
     f.referrerPolicy='strict-origin-when-cross-origin';
-    vf.replaceChildren(f); f.focus();
+    vf.replaceChildren(f); f.focus(); track('home_video_play');
   });
 })();
 
@@ -920,7 +930,8 @@ function setSel(d){
   doors.forEach(x=>x.classList.toggle('sel',x===d));
   if(split) split.classList.toggle('has-sel',!!d);
 }
-function openForm(who,door){
+function openForm(who,door,src){
+  track('form_open',{source:src||(door?'door':'other'),who:who||'none'});
   if(!dlg||typeof dlg.showModal!=='function'){ location.hash='talk'; return; }
   if(card.classList.contains('sent')){ card.classList.remove('sent'); form.reset(); send.disabled=false; send.textContent='Request a private conversation'; msg.className='formmsg'; msg.textContent=''; }
   form.who.value=who||'';
@@ -931,9 +942,9 @@ function openForm(who,door){
   if(matchMedia('(pointer: fine)').matches) form.name.focus({preventScroll:true});
 }
 function closeForm(){ if(dlg.open) dlg.close(); }
-$$('[data-open-form]').forEach(el=>el.addEventListener('click',e=>{ e.preventDefault(); openForm(); }));
+$$('[data-open-form]').forEach(el=>el.addEventListener('click',e=>{ e.preventDefault(); openForm('',null,el.closest('.nav')?'nav':el.closest('.band,.static-copy')?'hero':el.closest('.askcard')?'talk_card':'other'); }));
 doors.forEach(d=>{
-  d.addEventListener('click',()=>openForm(d.dataset.who,d));
+  d.addEventListener('click',()=>openForm(d.dataset.who,d,'door'));
   d.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); d.click(); } });
 });
 if(dlg){
@@ -950,18 +961,20 @@ form.addEventListener('submit',async e=>{
   const d=new FormData(form);
   if(d.get('_gotcha')){ sent(); return; }
   const name=(d.get('name')||'').trim(), phone=(d.get('phone')||'').trim(), email=(d.get('email')||'').trim();
-  if(!name||(!phone&&!email)){ msg.className='formmsg err'; msg.textContent='Please add your name and a phone number or an email so I can reach you.'; (name?form.phone:form.name).focus(); return; }
+  if(!name||(!phone&&!email)){ track('form_error',{reason:'missing_contact'}); msg.className='formmsg err'; msg.textContent='Please add your name and a phone number or an email so I can reach you.'; (name?form.phone:form.name).focus(); return; }
   if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ msg.className='formmsg err'; msg.textContent="That email address doesn't look right. Please check it, or use your phone number."; form.email.focus(); return; }
   if(!d.get('who')){ msg.className='formmsg err'; msg.textContent='Please choose whether you are an experienced agent or a newer agent.'; form.who.focus(); return; }
-  const body={_subject:'New private conversation request from '+name,name,phone,email,who:d.get('who'),note:(d.get('note')||'').trim()};
+  const body={_subject:'New private conversation request from '+name,name,phone,email,who:d.get('who'),best_time:d.get('when')||'Anytime',note:(d.get('note')||'').trim()};
   if(!email) delete body.email; if(!phone) delete body.phone;
   if(FORMSPREE_ID){
     send.disabled=true; send.textContent='Sending...';
     try{
       const r=await fetch('https://formspree.io/f/'+FORMSPREE_ID,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify(body)});
       if(!r.ok) throw new Error(r.status);
-      sent();
+      track('form_submit',{who:body.who,contact:phone?'phone':'email_only'});
+      sent(phone?"Got it. I'll call you personally from (412) 301-5393, so keep an eye out for it. Thank you for trusting me with this.":"Got it. I'll email you to find a time that works. If you'd rather talk now, call or text me at (412) 301-5393.");
     }catch(_){
+      track('form_error',{reason:'send_failed'});
       msg.className='formmsg err'; msg.textContent="That didn't send. Call or text Dana at (412) 301-5393.";
       send.disabled=false; send.textContent='Request a private conversation';
     }
