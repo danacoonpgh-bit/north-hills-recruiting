@@ -726,7 +726,7 @@ const GATES=[
 ];
 const hero=$('#hero'), stage=$('#stage'), video=$('#vid'), poster=$('#poster'), ring=$('.ring');
 const bands=$$('.band').map((el,i,all)=>({el,a:+el.dataset.a,b:+el.dataset.b,op:-1,k:-1,inert:null,first:i===0,last:i===all.length-1}));
-const VIDEO_URL='assets/hero-scrub.mp4', VIDEO_BYTES=9111337;
+const VIDEO_URL='assets/hero-scrub.mp4', VIDEO_BYTES=3956133;
 let scrubOn=false, heroOnScreen=false, started=false;
 let target=0, shown=0, rafId=null, lastTick=0, loadK=0, loadStart=0;
 let seekBusy=false, pendingTime=null;
