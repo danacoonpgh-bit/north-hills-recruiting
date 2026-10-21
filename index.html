@@ -95,15 +95,7 @@ h1,h2,h3,p{margin:0}
 .stage{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden;background:var(--canvas)}
 .poster{position:absolute;inset:0;background:url(assets/hero-static.jpg) 63% 40%/cover no-repeat}
 .scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(0,12,40,.92) 0%,rgba(0,12,40,.7) 38%,rgba(0,12,40,.12) 72%,rgba(0,12,40,.28) 100%)}
-/* headshot: a round portrait sitting on the name, its green backdrop pulled toward the hero's blues */
-.portrait{position:relative;isolation:isolate;margin:0 0 22px;width:112px;aspect-ratio:1;border-radius:50%;overflow:hidden;background:var(--panel);box-shadow:0 0 0 2px rgba(184,207,234,.8),0 0 0 7px rgba(0,12,40,.42),0 0 38px rgba(65,143,222,.5),0 22px 44px -14px rgba(0,8,30,.95);animation:portin 1.1s var(--ease) .2s both}
-.portrait img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 18%}
-.portrait::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;mix-blend-mode:color;background:radial-gradient(circle closest-side at 50% 40%,rgba(30,70,170,0) 40%,rgba(30,70,170,.92) 74%)}
-.portrait::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(circle closest-side at 50% 40%,rgba(0,12,40,0) 48%,rgba(0,12,40,.62) 100%)}
-.portrait+.kick::before{display:none}
-@keyframes portin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.portrait{animation:none}}
-.static-copy{position:relative;z-index:2;padding:calc(var(--nav) + 24vh) clamp(20px,6vw,64px) 54px;text-shadow:var(--tshadow);max-width:780px}
+.static-copy{position:relative;z-index:2;padding:calc(var(--nav) + 40vh) clamp(20px,6vw,64px) 54px;text-shadow:var(--tshadow);max-width:780px}
 .kick{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-primary);opacity:.92;margin-bottom:16px;display:block;line-height:1.8;letter-spacing:.16em}
 .kick::before{content:"";display:block;width:28px;height:2px;margin-bottom:12px;background:var(--window);box-shadow:0 0 10px rgba(65,143,222,.8)}
 .kick span{display:block}
@@ -114,8 +106,7 @@ h1,h2,h3,p{margin:0}
 .static-copy .cta-row{margin-top:24px}
 .static-copy .btn{text-shadow:none}
 @media (min-width:721px){
-  .portrait{width:clamp(132px,9.5vw,172px);margin-bottom:26px}
-  .static-copy{padding-top:calc(var(--nav) + 20vh);padding-left:clamp(52px,6vw,120px);padding-bottom:clamp(54px,9vh,96px);max-width:min(880px,62vw)}
+  .static-copy{padding-left:clamp(52px,6vw,120px);padding-bottom:clamp(54px,9vh,96px);max-width:min(880px,62vw)}
   .hl{font-size:clamp(2.6rem,4.6vw,4.7rem)}
   .static-copy .sub{font-size:clamp(1.1rem,1.35vw,1.4rem);max-width:38ch}
   .static-copy .btn{padding:16px 30px;font-size:17px}
@@ -360,6 +351,14 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   .step{opacity:1;transform:none}
   .tline .fill{transform:scaleY(1)}
 }
+
+/* headshot: a large round photo beside the name and headline */
+.portrait{margin:0;flex:none;position:relative;border-radius:50%;overflow:hidden;aspect-ratio:1;background:#0a1d52;box-shadow:0 0 0 2px rgba(255,255,255,.92),0 0 0 7px rgba(0,12,40,.35),0 18px 40px -12px rgba(0,6,24,.9)}
+.portrait img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 16%}
+.namerow{display:flex;align-items:center;gap:clamp(24px,2.4vw,40px)}
+.namerow .portrait{width:clamp(150px,10.5vw,200px)}.namerow .portrait img{transform:scale(1.08);transform-origin:50% 22%}
+@media (min-width:721px){.static-copy{max-width:min(1160px,78vw)}}
+@media (max-width:720px){.static-copy{padding-top:calc(var(--nav) + 22vh)}.namerow{flex-direction:column;align-items:flex-start;gap:18px}.namerow .portrait{width:96px}}
 </style>
 </head>
 <body>
@@ -392,9 +391,10 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <div class="poster" id="poster" role="img" aria-label="The Coldwell Banker Realty North Hills office at dusk"></div>
     <div class="scrim" aria-hidden="true"></div>
     <div class="static-copy">
-      <figure class="portrait"><img src="assets/dana-headshot.webp" width="952" height="1269" alt="Dana Coon, Sales Director at Coldwell Banker Realty North Hills" fetchpriority="high" decoding="async"></figure>
+      <div class="namerow"><figure class="portrait"><img src="assets/dana-headshot.webp" width="952" height="1269" alt="Dana Coon, Sales Director at Coldwell Banker Realty North Hills"></figure><div>
       <p class="kick"><span>Dana Coon, Sales Director</span><span class="dot"> &middot; </span><span>Coldwell Banker Realty North Hills</span></p>
       <h1 class="hl"><span class="ln">I'm Dana Coon.</span> <span class="ln">The door is open.</span></h1>
+      </div></div>
       <p class="sub">Tell me where your business is and where you want it to go. We'll talk it through in private, no pressure.</p>
       <div class="cta-row"><a class="btn" href="#talk" data-open-form>Book a private conversation</a></div>
     </div>
