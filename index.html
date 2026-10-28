@@ -294,21 +294,29 @@ section{scroll-margin-top:var(--nav)}
 @media (max-width:860px){.team .tgrid{grid-template-columns:1fr;grid-template-areas:"head" "reel" "rest"}.team .reel{margin-top:30px}.roster{margin-top:34px}}
 @media (max-width:520px){.roster{grid-template-columns:1fr}}
 
-/* G. in their words: an agent's own Facebook reel */
-.voice .vgrid{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"head reel" "rest reel";gap:0 clamp(36px,7vw,110px);align-items:center}
-.voice .vhead{grid-area:head;align-self:end}
-.voice .vrest{grid-area:rest;align-self:start}
-.voice .vlead{color:var(--text-secondary);font-weight:400;max-width:40ch;margin-top:18px;font-size:1.1rem}
-.vq{margin:30px 0 32px;padding-left:20px;border-left:3px solid var(--accent)}
+/* G. in their words: agents' own reels, each beside what they said */
+.voice .vlead{color:var(--text-secondary);font-weight:400;max-width:44ch;margin-top:18px;font-size:1.1rem}
+.tm{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(32px,6vw,96px);align-items:center;margin-top:clamp(52px,7vw,96px)}
+.tm.flip{grid-template-columns:minmax(0,1fr) auto}
+.tm.flip .reel{order:2}
+.tmname{font-weight:500;font-size:clamp(1.6rem,2.6vw,2.2rem);line-height:1.15}
+.tmrole{margin-top:8px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-secondary)}
+.vq{margin:28px 0 0;padding-left:20px;border-left:3px solid var(--accent)}
 .vq p{font-size:clamp(1.4rem,2.2vw,1.9rem);font-weight:500;line-height:1.25}
-.vq cite{display:block;margin-top:10px;font-style:normal;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-secondary)}
-.reel{grid-area:reel;margin:0;justify-self:center}
+.tmnote{margin-top:18px;color:var(--text-secondary);font-weight:400;font-size:1.05rem;max-width:44ch}
+.tmfull{margin:22px 0 0;max-width:62ch;color:#c9d4ee;font-weight:400;font-size:1.02rem;line-height:1.65}
+.tmfull p+p{margin-top:14px}
+.tmfull p:first-child::before{content:"\201C"}
+.tmfull p:last-child::after{content:"\201D"}
+.voice .vcta{margin-top:clamp(52px,7vw,90px)}
+.reel{margin:0;justify-self:center}
 .reelframe{width:300px;height:533px;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 0 0 1px rgba(184,207,234,.3),0 0 0 8px rgba(10,29,82,.6),0 40px 80px -30px rgba(0,4,20,.95),0 0 60px rgba(31,105,255,.25)}
 .reelframe iframe{display:block;width:100%;height:100%;border:0}
+.voice .igframe{box-shadow:0 0 0 1px rgba(184,207,234,.3),0 0 0 8px rgba(10,29,82,.6),0 40px 80px -30px rgba(0,4,20,.95),0 0 60px rgba(31,105,255,.25)}
 .reel figcaption{margin-top:16px;text-align:center}
 .reel figcaption a{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-muted);text-decoration:none}
 .reel figcaption a:hover{color:var(--text-primary)}
-@media (max-width:860px){.voice .vgrid{grid-template-columns:1fr;grid-template-areas:"head" "reel" "rest"}.reel{margin-top:30px}.vq{margin-top:34px}}
+@media (max-width:860px){.tm,.tm.flip{grid-template-columns:1fr;gap:30px}.tm.flip .reel{order:0}}
 
 /* F. talk (light) */
 .talk .grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,6vw,100px);align-items:start}
@@ -644,21 +652,42 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 <!-- ================= G. IN THEIR WORDS ================= -->
 <section class="sec voice" id="voice" aria-labelledby="vc-h">
   <div class="wrap rv">
-    <div class="vgrid">
-      <div class="vhead">
-        <p class="eyebrow pt" style="--i:0">In their words</p>
-        <h2 class="h2 pt" id="vc-h" style="--i:1">Hear it from one of our agents.</h2>
-        <p class="vlead pt" style="--i:2">Breanne French works out of the North Hills office. Here's why she loves it, in her own words.</p>
-      </div>
-      <figure class="reel pt" style="--i:2">
+    <p class="eyebrow pt" style="--i:0">In their words</p>
+    <h2 class="h2 pt" id="vc-h" style="--i:1">Hear it from our agents.</h2>
+    <p class="vlead pt" style="--i:2">North Hills agents on what it's like to build a business here.</p>
+
+    <article class="tm pt" style="--i:3" aria-labelledby="tm1">
+      <figure class="reel">
         <div class="reelframe"><iframe src="https://www.facebook.com/plugins/video.php?height=533&amp;href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1595722948158866%2F&amp;show_text=false&amp;width=300&amp;t=0" width="300" height="533" title="Breanne French on why she loves the North Hills office (Facebook video)" loading="lazy" scrolling="no" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div>
         <figcaption><a href="https://www.facebook.com/reel/1595722948158866/" target="_blank" rel="noopener">Watch on Facebook <span aria-hidden="true">&#8599;</span></a></figcaption>
       </figure>
-      <div class="vrest">
-        <blockquote class="vq pt" style="--i:3"><p>&ldquo;I drink the CB kool-aid!!&rdquo;</p><cite>Breanne French, Coldwell Banker Realty</cite></blockquote>
-        <div class="pt" style="--i:4"><a class="btn" href="#talk" data-open-form>Book a private conversation</a></div>
+      <div>
+        <h3 class="tmname" id="tm1">Breanne French</h3>
+        <p class="tmrole">Coldwell Banker Realty, North Hills</p>
+        <blockquote class="vq"><p>&ldquo;I drink the CB kool-aid!!&rdquo;</p></blockquote>
+        <p class="tmnote">Breanne on why she loves her office.</p>
       </div>
-    </div>
+    </article>
+
+    <article class="tm flip pt" style="--i:3" aria-labelledby="tm2">
+      <figure class="reel">
+        <div class="igframe"><iframe src="https://www.instagram.com/reel/DeADPn1RWQN/embed/" title="Zoey Hampton on being part of CB North Hills (Instagram reel)" loading="lazy" scrolling="no" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div>
+        <figcaption><a href="https://www.instagram.com/reel/DeADPn1RWQN/" target="_blank" rel="noopener">Watch on Instagram <span aria-hidden="true">&#8599;</span></a></figcaption>
+      </figure>
+      <div>
+        <h3 class="tmname" id="tm2">Zoey Hampton</h3>
+        <p class="tmrole">Coldwell Banker Realty, North Hills</p>
+        <blockquote class="vq"><p>&ldquo;Working for yourself and working by yourself are two very different things.&rdquo;</p></blockquote>
+        <blockquote class="tmfull">
+          <p>When I first became an agent, I interviewed with about 8 different brokerages before deciding where I wanted to build my career. Before real estate, I worked in title insurance and always loved the culture of the Coldwell Banker agents I encountered. I just had a feeling I was in the right place.</p>
+          <p>A few years later, I can confidently say I made the right choice. Being self-employed can feel like you&rsquo;re doing everything on your own, but working for yourself and working by yourself are two very different things. Coldwell Banker has given me a community that actually works with me, helping me build my business, create new business models, grow, and constantly improve.</p>
+          <p>And honestly, that support meant even more to me this year. I went through some really hard things personally, and my brokerage stepped in and helped me get back up after a few tough falls. They reminded me that I wasn&rsquo;t just a number or an agent. I was part of a community that genuinely cared.</p>
+          <p>Definitely grateful for where the wind blew me.</p>
+        </blockquote>
+      </div>
+    </article>
+
+    <div class="vcta pt" style="--i:4"><a class="btn" href="#talk" data-open-form>Book a private conversation</a></div>
   </div>
 </section>
 
