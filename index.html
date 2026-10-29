@@ -14,7 +14,12 @@
 <meta property="og:image" content="https://joincbnorthhills.com/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="assets/logo-cb-icon-blue.png">
-<!-- ANALYTICS: paste the Plausible snippet for joincbnorthhills.com on the next line (Plausible dashboard > Site settings > Site installation). Events below queue safely until it loads. -->
+<!-- Privacy-friendly analytics by Plausible (joincbnorthhills.com; outbound links, form submissions and downloads are on in the site's script). Custom events below queue safely until it loads. -->
+<script async src="https://plausible.io/js/pa--Q1MfLGokAaEZ6eMD1oot.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -789,7 +794,7 @@ rvs.forEach(r=>io.observe(r));
 const vio=new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('vis',e.isIntersecting)),{threshold:0.05});
 $$('.who,.home,.hub,.talk,#phone').forEach(s=>vio.observe(s));
 const seen=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ track('section_view',{section:e.target.id}); seen.unobserve(e.target); } }),{threshold:0.35});
-$$('#who,#home,#hub,#talk').forEach(s=>seen.observe(s));
+$$('#who,#home,#hub,#team,#voice,#talk').forEach(s=>seen.observe(s));
 
 /* Agent Hub preview: illustrated calendar and floor-time boards, then the tab controller */
 (function(){
