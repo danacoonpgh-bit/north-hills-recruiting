@@ -1015,7 +1015,7 @@ function throughDoor(done){
     if(fired) return; fired=true;
     done();
     /* the hallway is up: put the page back behind it */
-    setTimeout(()=>{ if(moved) moved.cancel(); stage.classList.remove('going'); glow.cancel(); going=false; },520);
+    setTimeout(()=>{ if(moved) moved.cancel(); stage.classList.remove('going'); glow.cancel(); going=false; },1000);
   };
   glow.finished.then(go,go);
   setTimeout(go,T+400);
