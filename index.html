@@ -452,7 +452,6 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 <nav class="nav" aria-label="Primary">
   <a class="logo" href="#top" aria-label="Coldwell Banker, back to top"><img src="assets/logo-cb-white.png" alt="Coldwell Banker" width="143" height="34"></a>
   <ul>
-    <li><a class="lnk" href="#who">Who it's for</a></li>
     <li><a class="lnk" href="#voice">Agent stories</a></li>
     <li><a class="lnk" href="#home">HOME</a></li>
     <li><a class="lnk" href="#hub">Agent Hub</a></li>
@@ -488,31 +487,6 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
         <p class="paths-alt"><svg class="lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Every meeting is confidential. Or text Dana:</span><a href="sms:+14123015393" data-sms>(412) 301-5393</a></p>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ================= A. WHO IT'S FOR ================= -->
-<section class="sec who" id="who" aria-labelledby="who-h">
-  <div class="wrap rv">
-    <p class="eyebrow pt" style="--i:0">Who it's for</p>
-    <h2 class="h2 head pt" id="who-h" style="--i:1">One office. Two ways in.</h2>
-    <div class="split" id="split">
-      <div class="door d1 pt" style="--i:2" role="button" tabindex="0" aria-haspopup="dialog" data-who="An experienced agent">
-        <p class="lbl"><span>If you're already producing</span><span class="pick" aria-hidden="true"></span></p>
-        <p class="dh">You already have a business. Moving it shouldn't cost you a year.</p>
-        <p class="b">You've built your clients, your systems, your reputation. We start with what you have and plan the move around your closings, not around our calendar.</p>
-        <p class="conf"><svg class="lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Every meeting is confidential</p>
-        <p class="godo">Book a private conversation <span aria-hidden="true">&#8594;</span></p>
-      </div>
-      <div class="door d2 pt" style="--i:3" role="button" tabindex="0" aria-haspopup="dialog" data-who="A newer agent">
-        <p class="lbl"><span>If you're newer</span><span class="pick" aria-hidden="true"></span></p>
-        <p class="dh">You have a license. Now you need a first year that works.</p>
-        <p class="b">Bring your questions. There are no bad ones here.</p>
-        <p class="conf"><svg class="lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Every meeting is confidential</p>
-        <p class="godo">Book a private conversation <span aria-hidden="true">&#8594;</span></p>
-      </div>
-    </div>
-    <div class="confbar pt" style="--i:4"><svg class="lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><p><b>Every meeting with me is confidential.</b></p></div>
   </div>
 </section>
 
@@ -817,9 +791,9 @@ rvs.forEach(r=>io.observe(r));
 
 /* sections toggle .vis so their whisper loops run only on screen */
 const vio=new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('vis',e.isIntersecting)),{threshold:0.05});
-$$('.who,.home,.hub,.talk,#phone').forEach(s=>vio.observe(s));
+$$('.home,.hub,.talk,#phone').forEach(s=>vio.observe(s));
 const seen=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ track('section_view',{section:e.target.id}); seen.unobserve(e.target); } }),{threshold:0.35});
-$$('#who,#home,#hub,#team,#voice,#talk').forEach(s=>seen.observe(s));
+$$('#home,#hub,#team,#voice,#talk').forEach(s=>seen.observe(s));
 
 /* Agent Hub preview: illustrated calendar and floor-time boards, then the tab controller */
 (function(){
