@@ -386,9 +386,27 @@ section{scroll-margin-top:var(--nav)}
 .door:hover .godo,.door.sel .godo,.door:focus-visible .godo{color:#fff;translate:4px 0}
 .modal{border:0;padding:0;margin:auto;background:transparent;color:var(--ink);width:min(560px,calc(100vw - 24px));max-width:none;max-height:none;overflow:visible}
 .modal.light{background:transparent}
-.modal::backdrop{background:rgba(0,10,32,.76);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
-.modal[open]{animation:mpop .4s var(--ease)}
-.modal[open]::backdrop{animation:mfade .4s var(--ease-soft)}
+.modal::backdrop{background:linear-gradient(rgba(40,24,6,.12),rgba(40,24,6,.12)),#d9b67a url(assets/hero-inside.jpg) 50% 50%/cover no-repeat}
+.modal[open]{animation:mpop .6s var(--ease)}
+.modal[open]::backdrop{animation:mfade .5s var(--ease-soft)}
+@media (min-width:1100px){.modal{margin-left:clamp(48px,9vw,180px)}}
+/* through the door: the hero zooms into the lit doorway, warm light floods the screen, the hallway is behind it */
+.flood{position:fixed;inset:0;z-index:9000;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 45%,#fff3d6,#f0cf94 60%,#d9b67a)}
+.stage .static-copy,.stage .scrim{transition:opacity .3s var(--ease-soft)}
+.stage.going .static-copy,.stage.going .scrim{opacity:0}
+.stage.going .poster{will-change:transform}
+/* set the agenda: optional topics that travel with the request */
+.agenda{border:0;padding:0;margin:0 0 20px;min-width:0}
+.agenda legend{padding:0;margin-bottom:10px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:40px;font:inherit;font-size:.98rem;font-weight:400;line-height:1.2;color:var(--ink);background:#fff;border:1px solid #8892ab;border-radius:999px;padding:8px 14px;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.chip:hover{border-color:var(--cb-blue)}
+.chip[aria-pressed="true"]{background:var(--cb-blue);border-color:var(--cb-blue);color:#fff;font-weight:500}
+.chip[aria-pressed="true"]::before{content:"\2713\00a0"}
+.smsgo{display:none;margin-top:12px;text-align:center;font-size:.98rem;font-weight:500;color:var(--cb-blue)}
+@media (pointer:coarse){.smsgo{display:block;padding:10px 0 2px}}
+@media (max-width:520px){.agenda{margin-bottom:14px}.agenda legend{font-size:11px;letter-spacing:.06em}.chips{gap:6px}.chip{font-size:.92rem;padding:6px 12px}#talkform .formmsg:empty{display:none}}
+.thanksagenda{margin-top:12px;font-weight:500;color:var(--ink)}
 @keyframes mpop{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
 @keyframes mfade{from{opacity:0}to{opacity:1}}
 .modal .card{position:relative;max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain;box-shadow:0 40px 90px -30px rgba(0,0,0,.7)}
@@ -400,7 +418,7 @@ section{scroll-margin-top:var(--nav)}
 .modal:focus,.modal:focus-visible{outline:none}
 @media (max-width:520px){.modal .card{padding:22px 18px}.modal .fld{margin-bottom:14px}.modal .fld input,.modal .fld select{padding:11px 12px}.modal .fld textarea{min-height:72px}.modal .fldhint{margin:-4px 0 14px}.fds{margin-bottom:18px}}
 html.modal-open{overflow:hidden}
-@media (prefers-reduced-motion:reduce){.modal[open],.modal[open]::backdrop{animation:none}}
+@media (prefers-reduced-motion:reduce){.modal[open],.modal[open]::backdrop{animation:none}.stage .static-copy,.stage .scrim{transition:none}}
 .thanks{display:none}
 .card.sent .thanks{display:block}
 .thanks h3{font-weight:500;font-size:1.8rem;line-height:1.15;margin-bottom:12px;color:var(--cb-blue)}
@@ -769,23 +787,27 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 </section>
 </main>
 
+<div class="flood" id="flood" aria-hidden="true"></div>
 <dialog class="modal light" id="formdlg" aria-labelledby="fd-h">
   <div class="card" id="card">
     <button class="mclose" type="button" aria-label="Close the form" data-close><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <form id="talkform" novalidate>
-    <h2 class="fdh" id="fd-h">Book a private conversation</h2>
+    <h2 class="fdh" id="fd-h">You're in. You set the agenda.</h2>
     <p class="fds">Thirty minutes, private, no pressure. Leave your name and number and I'll call you.</p>
+    <fieldset class="agenda"><legend>What should we cover? I'll start there.</legend><div class="chips" id="chips"></div></fieldset>
     <label class="fld"><span>Your name</span><input type="text" name="name" autocomplete="name" required></label>
     <label class="fld" id="fld-phone"><span>Best number</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel"></label>
     <label class="fld" id="fld-email" hidden><span>Email</span><input type="email" name="email" autocomplete="email" inputmode="email"></label>
     <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
     <button class="btn" type="submit" id="send">Request a private conversation</button>
     <p class="fldhint after"><span>I call first, personally.</span><button class="swap" type="button" id="swap">Rather use email?</button></p>
+    <a class="smsgo" id="smsgo" href="sms:+14123015393">Rather text me? It's already written.</a>
     <p class="formmsg" id="formmsg" role="status" aria-live="polite"></p>
     </form>
     <div class="thanks" id="thanks" tabindex="-1">
     <div role="status" aria-live="polite"><h3 id="thanksh">Got it.</h3>
-    <p id="thanksmsg">I'll be in touch soon. Thank you for trusting me with this.</p></div>
+    <p id="thanksmsg">I'll be in touch soon. Thank you for trusting me with this.</p>
+    <p class="thanksagenda" id="thanksagenda" hidden></p></div>
     <form id="moreform" novalidate>
     <p class="morelead">Want me to come prepared? Totally optional.</p>
     <div class="fld-row" id="morerow"><label class="fld" id="fld-who"><span>I am</span><select name="who"><option value="">Choose one</option><option>An experienced agent</option><option>A newer agent</option></select></label><label class="fld"><span>Best time to call</span><select name="when"><option>Anytime</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select></label></div>
@@ -937,9 +959,68 @@ function setContact(email){
 $('#swap').addEventListener('click',()=>{ setContact(!useEmail); (useEmail?form.email:form.phone).focus(); });
 function resetForm(){
   card.classList.remove('sent'); form.reset(); more.reset(); more.hidden=false; doneclose.hidden=true; lead=null; setContact(false);
-  send.disabled=false; send.textContent='Request a private conversation'; morebtn.disabled=false; morebtn.textContent='Send it over';
+  send.disabled=false; morebtn.disabled=false; morebtn.textContent='Send it over'; topicsFor=null; setSendLabel(); $('#thanksagenda').hidden=true;
   msg.className='formmsg'; msg.textContent=''; moremsg.className='formmsg'; moremsg.textContent='';
 }
+/* set the agenda: every topic is optional, goes out with the request, and is counted in Plausible even if they never send */
+const TOPICS={
+  'An experienced agent':['Split and fees','Timing around my closings','My pending deals','Leads and HOME','Marketing help','Who picks up when I call','Just curious'],
+  'A newer agent':['How year one really works','Finding first clients','Training and coaching','Help on my first deals','Costs to expect','Just curious'],
+  '':['Split and fees','Leads and HOME','Training and coaching','Who picks up when I call','Timing a move','Just curious']
+};
+let picks=[], topicsFor=null;
+function setSendLabel(){ send.textContent=picks.length?'Send my agenda to Dana':'Request a private conversation'; }
+function setSms(){
+  $('#smsgo').href='sms:+14123015393?&body='+encodeURIComponent("Hi Dana, I found your site and I'd like a private conversation."+(picks.length?' On my list: '+picks.join(', ')+'.':''));
+}
+function setTopics(who){
+  picks=[]; topicsFor=who;
+  $('#chips').replaceChildren(...(TOPICS[who]||TOPICS['']).map(t=>{
+    const b=document.createElement('button');
+    b.type='button'; b.className='chip'; b.textContent=t; b.setAttribute('aria-pressed','false');
+    b.addEventListener('click',()=>{
+      const on=!picks.includes(t);
+      picks=on?[...picks,t]:picks.filter(x=>x!==t);
+      b.setAttribute('aria-pressed',on);
+      if(on) track('agenda_pick',{topic:t,who:who||'none'});
+      setSendLabel(); setSms();
+    });
+    return b;
+  }));
+  setSendLabel(); setSms();
+}
+$('#smsgo').addEventListener('click',()=>track('text_click',{source:'agenda',topics:picks.length}));
+/* through the door: zoom the hero into the lit doorway, flood the screen with its light, then open the form in the hallway.
+   Off screen the light alone carries it; with reduced motion the form just opens. */
+const DOOR={x:.6975,y:.4,w:.0725}, IMG={w:2560,h:1448};
+let going=false;
+function throughDoor(done){
+  const flood=$('#flood'), poster=$('#poster'), stage=$('#stage');
+  if(RM.matches||!flood||!flood.animate){ done(); return; }
+  if(going) return;
+  going=true;
+  const r=poster.getBoundingClientRect(), seen=r.bottom>0&&r.top<innerHeight, T=seen?1100:380;
+  let moved=null;
+  if(seen){
+    const s=Math.max(r.width/IMG.w,r.height/IMG.h), rw=IMG.w*s, rh=IMG.h*s, pos=getComputedStyle(poster).backgroundPosition.split(' ').map(v=>parseFloat(v)/100);
+    const fx=(r.width-rw)*pos[0]+DOOR.x*rw, fy=(r.height-rh)*pos[1]+DOOR.y*rh;
+    const zoom=Math.min(14,1.15*Math.max(innerWidth,innerHeight)/(DOOR.w*rw));
+    poster.style.transformOrigin=fx+'px '+fy+'px';
+    stage.classList.add('going');
+    moved=poster.animate([{transform:'none'},{transform:`translate(${innerWidth/2-r.left-fx}px,${innerHeight/2-r.top-fy}px) scale(${zoom})`}],{duration:T,easing:'cubic-bezier(.62,0,.8,.42)',fill:'forwards'});
+  }
+  const glow=flood.animate(seen?[{opacity:0},{opacity:0,offset:.5},{opacity:1}]:[{opacity:0},{opacity:1}],{duration:T,easing:'ease-in',fill:'forwards'});
+  let fired=false;
+  const go=()=>{
+    if(fired) return; fired=true;
+    done();
+    /* the hallway is up: put the page back behind it */
+    setTimeout(()=>{ if(moved) moved.cancel(); stage.classList.remove('going'); glow.cancel(); going=false; },520);
+  };
+  glow.finished.then(go,go);
+  setTimeout(go,T+400);
+}
+addEventListener('load',()=>{ new Image().src='assets/hero-inside.jpg'; },{once:true});
 const FDS={'An experienced agent':"We'll plan the move around your closings. Thirty minutes, private, no pressure.",'A newer agent':"Bring your questions. There are no bad ones. Thirty minutes, private, no pressure.",'':"Thirty minutes, private, no pressure. Leave your name and number and I'll call you."};
 function openForm(who,door,src){
   track('form_open',{source:src||(door?'door':'other'),who:who||'none'});
@@ -947,11 +1028,14 @@ function openForm(who,door,src){
   if(card.classList.contains('sent')) resetForm();
   pickedWho=who||''; more.who.value=pickedWho; $('#fld-who').hidden=!!pickedWho; $('#morerow').classList.toggle('one',!!pickedWho);
   $('.fds',dlg).textContent=FDS[who||'']||FDS[''];
+  if(topicsFor!==pickedWho) setTopics(pickedWho);
   setSel(door||null);
-  root.classList.add('modal-open');
-  dlg.showModal();
-  card.scrollTop=0;
-  if(matchMedia('(pointer: fine)').matches) form.name.focus({preventScroll:true});
+  throughDoor(()=>{
+    root.classList.add('modal-open');
+    dlg.showModal();
+    card.scrollTop=0;
+    if(matchMedia('(pointer: fine)').matches) form.name.focus({preventScroll:true});
+  });
 }
 function closeForm(){ if(dlg.open) dlg.close(); }
 $$('[data-open-form]').forEach(el=>el.addEventListener('click',e=>{ e.preventDefault(); openForm('',null,el.closest('.nav')?'nav':el.closest('.band,.static-copy')?'hero':el.closest('.askcard')?'talk_card':'other'); }));
@@ -985,22 +1069,24 @@ form.addEventListener('submit',async e=>{
   if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ fail("That email address doesn't look right. Please check it, or use your phone number.",form.email); return; }
   const contact=phone?{phone}:{email}, body={_subject:'New private conversation request from '+name,name,...contact};
   if(pickedWho) body.who=pickedWho;
+  if(picks.length) body.agenda=picks.join('; ');
   if(FORMSPREE_ID){
     send.disabled=true; send.textContent='Sending...';
     try{
       const r=await post(body);
       if(!r.ok) throw new Error(r.status);
-      track('form_submit',{who:pickedWho||'none',contact:phone?'phone':'email_only'});
+      track('form_submit',{who:pickedWho||'none',contact:phone?'phone':'email_only',topics:picks.length});
       lead={name,contact};
+      if(picks.length){ const ta=$('#thanksagenda'); ta.textContent='On the agenda: '+picks.join(', ')+'.'; ta.hidden=false; }
       sent(phone?"I'll call you personally from (412) 301-5393, so keep an eye out for it. Thank you for trusting me with this.":"I'll email you to find a time that works. If you'd rather talk now, call or text me at (412) 301-5393.",'Got it, '+name.split(/\s+/)[0]+'.');
     }catch(_){
       track('form_error',{reason:'send_failed'});
-      send.disabled=false; send.textContent='Request a private conversation';
+      send.disabled=false; setSendLabel();
       fail("That didn't send. Call or text Dana at (412) 301-5393.",send);
     }
   } else {
     const subject=encodeURIComponent('Private conversation request from '+name);
-    const text=encodeURIComponent('Name: '+name+'\nPhone: '+phone+'\nEmail: '+email+'\nI am: '+(pickedWho||''));
+    const text=encodeURIComponent('Name: '+name+'\nPhone: '+phone+'\nEmail: '+email+'\nI am: '+(pickedWho||'')+'\nAgenda: '+picks.join('; '));
     location.href='mailto:'+OWNER_EMAIL+'?subject='+subject+'&body='+text;
     sent('Your email app should open with your message ready. Press send and I\'ll be in touch soon.');
   }
