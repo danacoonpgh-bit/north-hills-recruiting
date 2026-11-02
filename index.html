@@ -112,11 +112,7 @@ h1,h2,h3,p{margin:0}
 /* ---------- hero: the owner's photo with the words over it, on every screen ---------- */
 .hero{position:relative}
 .stage{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden;background:var(--canvas)}
-.poster{position:absolute;inset:0;background:url(assets/hero-static.jpg) 63% 40%/cover no-repeat}
-.bgvideo{position:absolute;inset:0;overflow:hidden;pointer-events:none;opacity:0;transition:opacity 1.4s var(--ease-soft);background:var(--canvas)}
-.bgvideo.on{opacity:1}
-.bgvideo iframe{position:absolute;border:0;max-width:none;pointer-events:none}
-@media (prefers-reduced-motion:reduce){.bgvideo{display:none}}
+.poster{position:absolute;inset:0;background:url(assets/hero-door.jpg) 100% 30%/cover no-repeat}
 .scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(0,12,40,.92) 0%,rgba(0,12,40,.7) 38%,rgba(0,12,40,.12) 72%,rgba(0,12,40,.28) 100%)}
 .static-copy{position:relative;z-index:2;padding:calc(var(--nav) + 40vh) clamp(20px,6vw,64px) 54px;text-shadow:var(--tshadow);max-width:780px}
 .kick{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-primary);opacity:.92;margin-bottom:16px;display:block;line-height:1.8;letter-spacing:.16em}
@@ -448,12 +444,12 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 @media (min-width:721px){.static-copy{max-width:min(1160px,78vw)}}
 @media (max-width:720px){.static-copy{padding-top:calc(var(--nav) + 4vh);padding-bottom:36px}.namerow{flex-direction:column;align-items:flex-start;gap:18px}.namerow .portrait{width:96px}}
 
-/* hero layout around the spot's own tagline and logo, which stay on screen for its full length: nothing sits on top of them */
+/* hero layout: nothing sits on top of the open door */
 .stage{--panel:clamp(440px,38vw,640px)}
-/* wide screens: the copy gets a navy panel on the left, the video fills the rest */
+/* wide screens: the copy gets a navy panel on the left, the door fills the rest */
 @media (min-aspect-ratio:8/5) and (min-width:1100px){
   .stage{align-items:center}
-  .scrim{background:linear-gradient(to right,var(--canvas) calc(var(--panel) - 16px),rgba(0,18,61,0) calc(var(--panel) + 16px))}
+  .scrim{background:linear-gradient(to right,var(--canvas) calc(var(--panel) - 16px),rgba(0,18,61,0) calc(var(--panel) + 160px))}
   .static-copy{width:var(--panel);max-width:none;flex:none;padding:calc(var(--nav) + 16px) 20px 28px clamp(52px,6vw,120px);text-shadow:none}
   .namerow{display:grid;grid-template-columns:84px minmax(0,1fr);column-gap:16px;align-items:center}
   .namerow>div{display:contents}
@@ -466,10 +462,10 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   .path{padding:13px 14px 13px 18px}
   .paths-alt{font-size:.95rem}
 }
-/* everything else: the video is a full-width band with the copy below it, only the empty top of the frame is cropped */
+/* everything else: the door is a full-width band with the copy below it */
 @media (max-aspect-ratio:1599/1000),(max-width:1099px){
   .stage{display:block;min-height:0}
-  .poster,.bgvideo{inset:auto;top:var(--nav);left:0;width:100%;aspect-ratio:16/5.94}
+  .poster{inset:auto;top:var(--nav);left:0;width:100%;aspect-ratio:16/5.94;background-position:100% 20%}
   .scrim{display:none}
   .static-copy{max-width:none;padding:calc(var(--nav) + 37.2vw + 22px) clamp(20px,6vw,64px) 36px;text-shadow:none}
   .namerow{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;align-items:center}
@@ -518,8 +514,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 <!-- ================= HERO ================= -->
 <section class="hero" id="hero" aria-label="Welcome">
   <div class="stage" id="stage">
-    <div class="poster" id="poster" role="img" aria-label="The Coldwell Banker Realty North Hills office at dusk"></div>
-    <div class="bgvideo" id="bgvideo" aria-hidden="true"><div id="ytbg"></div></div>
+    <div class="poster" id="poster" role="img" aria-label="A navy front door standing open at dusk, warm light spilling onto the steps"></div>
     <div class="scrim" aria-hidden="true"></div>
     <div class="static-copy">
       <div class="namerow"><figure class="portrait"><img src="assets/dana-headshot.webp" width="952" height="1269" alt="Dana Coon, Sales Director at Coldwell Banker Realty North Hills"></figure><div>
@@ -906,40 +901,6 @@ updateTline();
     f.referrerPolicy='strict-origin-when-cross-origin';
     vf.replaceChildren(f); f.focus(); track('home_video_play');
   });
-})();
-
-/* hero background video: the Coldwell Banker "Live Well with Coldwell" spot, muted and looping in full.
-   The dusk photo stays underneath until the first frame plays, and stays if autoplay is blocked,
-   the visitor prefers reduced motion, or Data Saver is on. Loads after the page, pauses off screen. */
-(function(){
-  const VID='OHUgkgrk8CI', box=$('#bgvideo'), stage=$('#stage'); if(!box||!stage) return;
-  if(RM.matches||(navigator.connection&&navigator.connection.saveData)) return;
-  const SPLIT=matchMedia('(min-aspect-ratio:8/5) and (min-width:1100px)');
-  let player=null, ready=false, inView=true;
-  function fit(){
-    const f=$('iframe',box); if(!f) return;
-    /* the spot's tagline and logo are centered in its frame, so keep that center clear of the copy */
-    let w,h,x,y;
-    if(SPLIT.matches){ const W=stage.clientWidth, H=stage.clientHeight, p=$('.static-copy',stage).offsetWidth, R=W-p; h=Math.max(H,R*9/16); w=h*16/9; x=p+R/2-w/2; y=-(h-H)/2; }
-    else { w=box.clientWidth; h=w*9/16; x=0; y=-h*.28; }
-    f.style.width=w+'px'; f.style.height=h+'px'; f.style.left=x+'px'; f.style.top=y+'px';
-  }
-  function boot(){
-    player=new YT.Player('ytbg',{host:'https://www.youtube-nocookie.com',videoId:VID,
-      playerVars:{autoplay:1,mute:1,controls:0,loop:1,playlist:VID,playsinline:1,rel:0,modestbranding:1,disablekb:1,fs:0,iv_load_policy:3,origin:location.origin},
-      events:{
-        onReady:e=>{ ready=true; e.target.mute(); fit(); if(inView) e.target.playVideo(); },
-        onStateChange:e=>{
-          if(e.data===1&&!box.classList.contains('on')){ box.classList.add('on'); track('hero_video_playing'); }
-          else if(e.data===0){ e.target.seekTo(0); e.target.playVideo(); }
-        }
-      }});
-    fit();
-  }
-  if('ResizeObserver' in window) new ResizeObserver(fit).observe(stage); else addEventListener('resize',fit);
-  new IntersectionObserver(es=>{ inView=es[0].isIntersecting; if(ready){ inView?player.playVideo():player.pauseVideo(); } }).observe(stage);
-  function load(){ window.onYouTubeIframeAPIReady=boot; const s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api'; document.head.appendChild(s); }
-  if(document.readyState==='complete') load(); else addEventListener('load',load,{once:true});
 })();
 
 /* reduced motion: pin the scripted page elements to their final state, live in both directions */
