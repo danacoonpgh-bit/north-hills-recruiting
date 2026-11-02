@@ -123,9 +123,26 @@ h1,h2,h3,p{margin:0}
 .hl .ln{display:block}
 .static-copy .sub{margin-top:16px;font-size:1.1rem;font-weight:400;max-width:34ch}
 .static-copy .cta-row{margin-top:24px}
+/* hero path chooser: pick your situation, the form opens already set up for you */
+.paths{margin-top:28px;max-width:740px}
+.paths-q{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--window);margin-bottom:12px}
+.paths-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.path{display:grid;grid-template-columns:minmax(0,1fr) auto;align-content:start;gap:4px 16px;padding:18px 18px 18px 22px;border-radius:4px;border:1px solid rgba(184,207,234,.4);border-left:3px solid var(--accent);background:rgba(0,18,61,.66);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:var(--text-primary);font:inherit;text-align:left;text-shadow:none;cursor:pointer;transition:transform .35s var(--ease),border-color .3s,background .3s,box-shadow .4s}
+.path:hover,.path:focus-visible{transform:translateY(-4px);border-color:var(--accent-muted);border-left-color:var(--accent);background:rgba(10,29,82,.9);box-shadow:0 24px 44px -22px rgba(31,105,255,.75)}
+.path:active{transform:none}
+.path .pl{grid-column:1;font-weight:500;font-size:clamp(1.1rem,1.5vw,1.3rem);line-height:1.2}
+.path .ps{grid-column:1;font-weight:400;font-size:.98rem;line-height:1.4;color:var(--text-secondary)}
+.path .pa{grid-column:2;grid-row:1/3;align-self:center;width:38px;height:38px;border-radius:50%;background:var(--accent);display:grid;place-items:center;transition:transform .35s var(--ease),background .3s}
+.path .pa svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.path:hover .pa,.path:focus-visible .pa{transform:translateX(4px);background:var(--accent-hover)}
+.paths-alt{margin-top:16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-weight:400;font-size:1rem;color:var(--text-primary)}
+.paths-alt .lock{width:17px;height:17px;color:var(--window)}
+.paths-alt a{font-weight:500;text-decoration:none;border-bottom:2px solid var(--accent);padding-bottom:1px;white-space:nowrap}
+.paths-alt a:hover{color:#fff;border-bottom-color:#fff}
+@media (max-width:720px){.paths{margin-top:22px}.paths-row{grid-template-columns:1fr}.path{padding:16px 16px 16px 20px;min-height:72px}}
 .static-copy .btn{text-shadow:none}
 @media (min-width:721px){
-  .static-copy{padding-left:clamp(52px,6vw,120px);padding-bottom:clamp(54px,9vh,96px);max-width:min(880px,62vw)}
+  .static-copy{padding-top:calc(var(--nav) + 12vh);padding-left:clamp(52px,6vw,120px);padding-bottom:clamp(40px,7vh,80px);max-width:min(880px,62vw)}
   .hl{font-size:clamp(2.6rem,4.6vw,4.7rem)}
   .static-copy .sub{font-size:clamp(1.1rem,1.35vw,1.4rem);max-width:38ch}
   .static-copy .btn{padding:16px 30px;font-size:17px}
@@ -419,7 +436,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 .namerow{display:flex;align-items:center;gap:clamp(24px,2.4vw,40px)}
 .namerow .portrait{width:clamp(150px,10.5vw,200px)}.namerow .portrait img{transform:scale(1.08);transform-origin:50% 22%}
 @media (min-width:721px){.static-copy{max-width:min(1160px,78vw)}}
-@media (max-width:720px){.static-copy{padding-top:calc(var(--nav) + 18vh)}.namerow{flex-direction:column;align-items:flex-start;gap:18px}.namerow .portrait{width:96px}}
+@media (max-width:720px){.static-copy{padding-top:calc(var(--nav) + 4vh);padding-bottom:36px}.namerow{flex-direction:column;align-items:flex-start;gap:18px}.namerow .portrait{width:96px}}
 </style>
 </head>
 <body>
@@ -461,7 +478,14 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <h1 class="hl"><span class="ln">I'm Dana Coon.</span> <span class="ln">The door is open.</span></h1>
       </div></div>
       <p class="sub">Tell me where your business is and where you want it to go. We'll talk it through in private, no pressure.</p>
-      <div class="cta-row"><a class="btn" href="#talk" data-open-form>Book a private conversation</a></div>
+      <div class="paths" role="group" aria-labelledby="paths-q">
+        <p class="paths-q" id="paths-q">Where are you right now?</p>
+        <div class="paths-row">
+          <button class="path" type="button" data-path="An experienced agent" aria-haspopup="dialog"><span class="pl">I'm already producing</span><span class="ps">Move the business without losing a year.</span><span class="pa" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+          <button class="path" type="button" data-path="A newer agent" aria-haspopup="dialog"><span class="pl">I'm newer to this</span><span class="ps">Build a first year that works.</span><span class="pa" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+        </div>
+        <p class="paths-alt"><svg class="lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Every meeting is confidential. Or text Dana:</span><a href="sms:+14123015393" data-sms>(412) 301-5393</a></p>
+      </div>
     </div>
   </div>
 </section>
@@ -877,11 +901,13 @@ function setSel(d){
   doors.forEach(x=>x.classList.toggle('sel',x===d));
   if(split) split.classList.toggle('has-sel',!!d);
 }
+const FDS={'An experienced agent':"We'll plan the move around your closings. Thirty minutes, private, no pressure.",'A newer agent':"Bring your questions. There are no bad ones. Thirty minutes, private, no pressure.",'':"Thirty minutes, private, no pressure. Tell me a little and I'll be in touch."};
 function openForm(who,door,src){
   track('form_open',{source:src||(door?'door':'other'),who:who||'none'});
   if(!dlg||typeof dlg.showModal!=='function'){ location.hash='talk'; return; }
   if(card.classList.contains('sent')){ card.classList.remove('sent'); form.reset(); send.disabled=false; send.textContent='Request a private conversation'; msg.className='formmsg'; msg.textContent=''; }
   form.who.value=who||'';
+  $('.fds',dlg).textContent=FDS[who||'']||FDS[''];
   setSel(door||null);
   root.classList.add('modal-open');
   dlg.showModal();
@@ -890,6 +916,8 @@ function openForm(who,door,src){
 }
 function closeForm(){ if(dlg.open) dlg.close(); }
 $$('[data-open-form]').forEach(el=>el.addEventListener('click',e=>{ e.preventDefault(); openForm('',null,el.closest('.nav')?'nav':el.closest('.band,.static-copy')?'hero':el.closest('.askcard')?'talk_card':'other'); }));
+$$('[data-path]').forEach(b=>b.addEventListener('click',()=>openForm(b.dataset.path,doors.find(d=>d.dataset.who===b.dataset.path)||null,'hero_path')));
+$$('[data-sms]').forEach(a=>a.addEventListener('click',()=>track('text_click',{source:'hero'})));
 doors.forEach(d=>{
   d.addEventListener('click',()=>openForm(d.dataset.who,d,'door'));
   d.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); d.click(); } });
