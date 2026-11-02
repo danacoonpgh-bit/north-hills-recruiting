@@ -367,6 +367,12 @@ section{scroll-margin-top:var(--nav)}
 .fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(31,105,255,.2);background:#fff}
 .fld-row{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
 .fldhint{margin:-8px 0 20px;font-size:.92rem;color:var(--ink-2);font-weight:400}
+.fld[hidden],.btn[hidden]{display:none}
+.fld-row.one{grid-template-columns:1fr}
+.modal .fldhint.after{margin:14px 0 0;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 14px}
+.swap{background:none;border:0;padding:0;font:inherit;color:var(--cb-blue);font-weight:500;text-decoration:underline;cursor:pointer}
+.thanks p.morelead{padding-top:18px;border-top:1px solid var(--line);margin-bottom:16px;color:var(--ink);font-weight:500}
+.skip2{display:block;width:100%;margin-top:8px;background:none;border:0;padding:10px;font:inherit;font-size:.98rem;color:var(--ink-2);text-decoration:underline;cursor:pointer}
 @media (max-width:520px){.fld-row{grid-template-columns:1fr}}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .card .btn{width:100%;padding:16px 24px;font-size:17px}
@@ -375,7 +381,7 @@ section{scroll-margin-top:var(--nav)}
 .formmsg{margin-top:16px;font-weight:400;font-size:1rem;color:var(--ink-2);min-height:1.4em}
 .formmsg.ok{color:#0b5f33;font-weight:500}
 .formmsg.err{color:#a3261f;font-weight:500}
-.card.sent form{display:none}
+.card.sent #talkform{display:none}
 .askcard{align-self:center}
 .askh{font-weight:500;font-size:clamp(1.4rem,2.2vw,1.9rem);line-height:1.2;color:var(--cb-blue);margin-bottom:12px}
 .askp{color:var(--ink-2);font-weight:400;margin-bottom:26px;max-width:42ch}
@@ -746,7 +752,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <div>
         <p class="eyebrow pt" style="--i:0">Talk to Dana</p>
         <h2 class="h2 pt" id="tk-h" style="--i:1">Let's talk.</h2>
-        <p class="lead pt" style="--i:2">Thirty minutes, private, no pressure. Tell me a little and I'll be in touch.</p>
+        <p class="lead pt" style="--i:2">Thirty minutes, private, no pressure. Leave your name and number and I'll call you.</p>
         <div class="office pt" style="--i:3">
           <b>Dana Coon, Sales Director</b>Coldwell Banker Realty, North Hills<br>
           9600 Perry Hwy Ste 100, Pittsburgh, PA 15237<br><span style="display:block;margin-top:10px;color:var(--ink)">Call or text Dana</span>
@@ -760,7 +766,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       </div>
       <div class="card askcard pt" style="--i:2">
         <p class="askh">Ready when you are.</p>
-        <p class="askp">It takes about a minute. Every conversation with me is confidential.</p>
+        <p class="askp">Just your name and number. Every conversation with me is confidential.</p>
         <button class="btn" type="button" data-open-form>Request a private conversation</button>
       </div>
     </div>
@@ -773,20 +779,27 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <button class="mclose" type="button" aria-label="Close the form" data-close><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <form id="talkform" novalidate>
     <h2 class="fdh" id="fd-h">Book a private conversation</h2>
-    <p class="fds">Thirty minutes, private, no pressure. Tell me a little and I'll be in touch.</p>
+    <p class="fds">Thirty minutes, private, no pressure. Leave your name and number and I'll call you.</p>
     <label class="fld"><span>Your name</span><input type="text" name="name" autocomplete="name" required></label>
-    <div class="fld-row"><label class="fld"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel"></label><label class="fld"><span>Email</span><input type="email" name="email" autocomplete="email" inputmode="email"></label></div>
-    <p class="fldhint">Phone is fastest. I call first. Add an email too if you like.</p>
-    <div class="fld-row"><label class="fld"><span>I am</span><select name="who" required><option value="" disabled selected hidden>Choose one</option><option>An experienced agent</option><option>A newer agent</option></select></label><label class="fld"><span>Best time to call</span><select name="when"><option>Anytime</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select></label></div>
-    <label class="fld"><span>Anything you want me to know (optional)</span><textarea name="note"></textarea></label>
+    <label class="fld" id="fld-phone"><span>Best number</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel"></label>
+    <label class="fld" id="fld-email" hidden><span>Email</span><input type="email" name="email" autocomplete="email" inputmode="email"></label>
     <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
     <button class="btn" type="submit" id="send">Request a private conversation</button>
+    <p class="fldhint after"><span>I call first, personally.</span><button class="swap" type="button" id="swap">Rather use email?</button></p>
     <p class="formmsg" id="formmsg" role="status" aria-live="polite"></p>
     </form>
-    <div class="thanks" id="thanks" role="status" aria-live="polite" tabindex="-1">
-    <h3>Got it.</h3>
-    <p id="thanksmsg">I'll be in touch soon. Thank you for trusting me with this.</p>
-    <button class="btn" type="button" data-close>Close</button>
+    <div class="thanks" id="thanks" tabindex="-1">
+    <div role="status" aria-live="polite"><h3 id="thanksh">Got it.</h3>
+    <p id="thanksmsg">I'll be in touch soon. Thank you for trusting me with this.</p></div>
+    <form id="moreform" novalidate>
+    <p class="morelead">Want me to come prepared? Totally optional.</p>
+    <div class="fld-row" id="morerow"><label class="fld" id="fld-who"><span>I am</span><select name="who"><option value="">Choose one</option><option>An experienced agent</option><option>A newer agent</option></select></label><label class="fld"><span>Best time to call</span><select name="when"><option>Anytime</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select></label></div>
+    <label class="fld"><span>Anything you want me to know</span><textarea name="note"></textarea></label>
+    <button class="btn" type="submit" id="morebtn">Send it over</button>
+    <button class="skip2" type="button" data-close>I'm good, close this</button>
+    <p class="formmsg" id="moremsg" role="status" aria-live="polite"></p>
+    </form>
+    <button class="btn" type="button" id="doneclose" data-close hidden>Close</button>
     </div>
   </div>
 </dialog>
@@ -947,18 +960,31 @@ applyReducedMotion();
 /* =====================================================
    FORM
    ===================================================== */
-const form=$('#talkform'), msg=$('#formmsg'), card=$('#card'), thanks=$('#thanks'), thanksmsg=$('#thanksmsg'), send=$('#send');
+const form=$('#talkform'), more=$('#moreform'), msg=$('#formmsg'), moremsg=$('#moremsg'), card=$('#card'), thanks=$('#thanks'), thanksh=$('#thanksh'), thanksmsg=$('#thanksmsg'), send=$('#send'), morebtn=$('#morebtn'), doneclose=$('#doneclose');
 const dlg=$('#formdlg'), split=$('#split'), doors=$$('.door',split||document);
 function setSel(d){
   doors.forEach(x=>x.classList.toggle('sel',x===d));
   if(split) split.classList.toggle('has-sel',!!d);
 }
-const FDS={'An experienced agent':"We'll plan the move around your closings. Thirty minutes, private, no pressure.",'A newer agent':"Bring your questions. There are no bad ones. Thirty minutes, private, no pressure.",'':"Thirty minutes, private, no pressure. Tell me a little and I'll be in touch."};
+let pickedWho='', lead=null, useEmail=false;
+function setContact(email){
+  useEmail=email;
+  $('#fld-phone').hidden=email; $('#fld-email').hidden=!email;
+  (email?form.phone:form.email).value='';
+  $('#swap').textContent=email?'Rather use your phone?':'Rather use email?';
+}
+$('#swap').addEventListener('click',()=>{ setContact(!useEmail); (useEmail?form.email:form.phone).focus(); });
+function resetForm(){
+  card.classList.remove('sent'); form.reset(); more.reset(); more.hidden=false; doneclose.hidden=true; lead=null; setContact(false);
+  send.disabled=false; send.textContent='Request a private conversation'; morebtn.disabled=false; morebtn.textContent='Send it over';
+  msg.className='formmsg'; msg.textContent=''; moremsg.className='formmsg'; moremsg.textContent='';
+}
+const FDS={'An experienced agent':"We'll plan the move around your closings. Thirty minutes, private, no pressure.",'A newer agent':"Bring your questions. There are no bad ones. Thirty minutes, private, no pressure.",'':"Thirty minutes, private, no pressure. Leave your name and number and I'll call you."};
 function openForm(who,door,src){
   track('form_open',{source:src||(door?'door':'other'),who:who||'none'});
   if(!dlg||typeof dlg.showModal!=='function'){ location.hash='talk'; return; }
-  if(card.classList.contains('sent')){ card.classList.remove('sent'); form.reset(); send.disabled=false; send.textContent='Request a private conversation'; msg.className='formmsg'; msg.textContent=''; }
-  form.who.value=who||'';
+  if(card.classList.contains('sent')) resetForm();
+  pickedWho=who||''; more.who.value=pickedWho; $('#fld-who').hidden=!!pickedWho; $('#morerow').classList.toggle('one',!!pickedWho);
   $('.fds',dlg).textContent=FDS[who||'']||FDS[''];
   setSel(door||null);
   root.classList.add('modal-open');
@@ -979,37 +1005,64 @@ if(dlg){
   dlg.addEventListener('click',e=>{ if(e.target===dlg) closeForm(); });
   dlg.addEventListener('close',()=>{ root.classList.remove('modal-open'); setSel(null); });
 }
-function sent(text){
+function sent(text,head){
+  if(head) thanksh.textContent=head;
   if(text) thanksmsg.textContent=text;
+  more.hidden=!lead; doneclose.hidden=!!lead;
   card.classList.add('sent'); card.scrollTop=0; thanks.focus({preventScroll:true});
 }
+const post=b=>fetch('https://formspree.io/f/'+FORMSPREE_ID,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify(b)});
+/* step 1: name and a way to reach them. This alone reaches Dana, so a visitor who stops here is still a lead. */
 form.addEventListener('submit',async e=>{
   e.preventDefault(); msg.className='formmsg'; msg.textContent='';
   const d=new FormData(form);
   if(d.get('_gotcha')){ sent(); return; }
   const name=(d.get('name')||'').trim(), phone=(d.get('phone')||'').trim(), email=(d.get('email')||'').trim();
-  if(!name||(!phone&&!email)){ track('form_error',{reason:'missing_contact'}); msg.className='formmsg err'; msg.textContent='Please add your name and a phone number or an email so I can reach you.'; (name?form.phone:form.name).focus(); return; }
-  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ msg.className='formmsg err'; msg.textContent="That email address doesn't look right. Please check it, or use your phone number."; form.email.focus(); return; }
-  if(!d.get('who')){ msg.className='formmsg err'; msg.textContent='Please choose whether you are an experienced agent or a newer agent.'; form.who.focus(); return; }
-  const body={_subject:'New private conversation request from '+name,name,phone,email,who:d.get('who'),best_time:d.get('when')||'Anytime',note:(d.get('note')||'').trim()};
-  if(!email) delete body.email; if(!phone) delete body.phone;
+  const fail=(t,el)=>{ msg.className='formmsg err'; msg.textContent=t; el.focus(); };
+  if(!name||(!phone&&!email)){ track('form_error',{reason:'missing_contact'}); fail(useEmail?'Please add your name and an email so I can reach you.':'Please add your name and a number so I can reach you.',!name?form.name:useEmail?form.email:form.phone); return; }
+  if(phone&&phone.replace(/\D/g,'').length<10){ fail('That number looks short. Please check it, or use email instead.',form.phone); return; }
+  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ fail("That email address doesn't look right. Please check it, or use your phone number.",form.email); return; }
+  const contact=phone?{phone}:{email}, body={_subject:'New private conversation request from '+name,name,...contact};
+  if(pickedWho) body.who=pickedWho;
   if(FORMSPREE_ID){
     send.disabled=true; send.textContent='Sending...';
     try{
-      const r=await fetch('https://formspree.io/f/'+FORMSPREE_ID,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify(body)});
+      const r=await post(body);
       if(!r.ok) throw new Error(r.status);
-      track('form_submit',{who:body.who,contact:phone?'phone':'email_only'});
-      sent(phone?"Got it. I'll call you personally from (412) 301-5393, so keep an eye out for it. Thank you for trusting me with this.":"Got it. I'll email you to find a time that works. If you'd rather talk now, call or text me at (412) 301-5393.");
+      track('form_submit',{who:pickedWho||'none',contact:phone?'phone':'email_only'});
+      lead={name,contact};
+      sent(phone?"I'll call you personally from (412) 301-5393, so keep an eye out for it. Thank you for trusting me with this.":"I'll email you to find a time that works. If you'd rather talk now, call or text me at (412) 301-5393.",'Got it, '+name.split(/\s+/)[0]+'.');
     }catch(_){
       track('form_error',{reason:'send_failed'});
-      msg.className='formmsg err'; msg.textContent="That didn't send. Call or text Dana at (412) 301-5393.";
       send.disabled=false; send.textContent='Request a private conversation';
+      fail("That didn't send. Call or text Dana at (412) 301-5393.",send);
     }
   } else {
     const subject=encodeURIComponent('Private conversation request from '+name);
-    const text=encodeURIComponent('Name: '+name+'\nPhone: '+phone+'\nEmail: '+email+'\nI am: '+body.who+'\n\n'+body.note);
+    const text=encodeURIComponent('Name: '+name+'\nPhone: '+phone+'\nEmail: '+email+'\nI am: '+(pickedWho||''));
     location.href='mailto:'+OWNER_EMAIL+'?subject='+subject+'&body='+text;
     sent('Your email app should open with your message ready. Press send and I\'ll be in touch soon.');
+  }
+});
+/* step 2: optional detail, only sent if they actually added something */
+more.addEventListener('submit',async e=>{
+  e.preventDefault(); moremsg.className='formmsg'; moremsg.textContent='';
+  const d=new FormData(more), who=d.get('who')||'', when=d.get('when')||'Anytime', note=(d.get('note')||'').trim();
+  if(!lead||(who===pickedWho&&when==='Anytime'&&!note)){ closeForm(); return; }
+  const body={_subject:'More detail from '+lead.name+' (private conversation request)',name:lead.name,...lead.contact,best_time:when};
+  if(who) body.who=who; if(note) body.note=note;
+  morebtn.disabled=true; morebtn.textContent='Sending...';
+  try{
+    const r=await post(body);
+    if(!r.ok) throw new Error(r.status);
+    track('form_details',{who:who||'none',note:note?'yes':'no'});
+    more.hidden=true; doneclose.hidden=false;
+    thanksh.textContent='Thanks, '+lead.name.split(/\s+/)[0]+'.'; thanksmsg.textContent='That helps. Talk soon.';
+    thanks.focus({preventScroll:true});
+  }catch(_){
+    track('form_error',{reason:'details_failed'});
+    moremsg.className='formmsg err'; moremsg.textContent="That part didn't send, but I have your request. Just tell me when we talk.";
+    morebtn.disabled=false; morebtn.textContent='Send it over';
   }
 });
 })();
